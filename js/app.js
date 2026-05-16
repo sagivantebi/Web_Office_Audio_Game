@@ -45,11 +45,16 @@ function onScanSuccess(decodedText) {
     const match = metadata.find(item => decodedText.includes(item.qr_pattern));
 
     if (match) {
-        // Pause and HIDE scanner
-        html5QrCode.pause();
-        document.getElementById('scanner-container').style.display = 'none';
-        
-        playAudio(match);
+        // STOP and HIDE scanner
+        html5QrCode.stop().then(() => {
+            document.getElementById('scanner-container').style.display = 'none';
+            playAudio(match);
+        }).catch(err => {
+            console.error("Error stopping scanner", err);
+            // Fallback: hide anyway
+            document.getElementById('scanner-container').style.display = 'none';
+            playAudio(match);
+        });
     }
 }
 
@@ -82,7 +87,7 @@ nextBtn.addEventListener('click', () => {
     statusBadge.innerText = 'Ready to Scan';
     statusBadge.className = 'status-badge status-ready';
 
-    // Show and Resume scanner
+    // Show and Re-start scanner
     document.getElementById('scanner-container').style.display = 'block';
-    html5QrCode.resume();
+    startScanner();
 });
