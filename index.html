@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Office - Audio Game</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- QR Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <!-- Small logo placeholder - Dunder Mifflin style -->
+            <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="0" y="30" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="#1a1a1a">THE OFFICE</text>
+            </svg>
+        </div>
+        <h1>Audio Game</h1>
+    </header>
+
+    <main>
+        <div id="status-badge" class="status-badge status-ready">Ready to Scan</div>
+
+        <div id="scanner-container">
+            <div id="reader"></div>
+        </div>
+
+        <div id="audio-player" class="audio-info">
+            <h2 id="episode-title">The Pilot</h2>
+            <p id="season-info">Season 1</p>
+            <audio id="main-audio" src=""></audio>
+        </div>
+
+        <div class="controls">
+            <button id="replay-btn" class="btn-primary" style="display: none;">Replay Audio</button>
+            <button id="next-btn" class="btn-secondary" style="display: none;">Scan Next</button>
+        </div>
+    </main>
+
+    <footer>
+        Dunder Mifflin Paper Company, Inc.
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
