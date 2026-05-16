@@ -3,8 +3,6 @@ let html5QrCode;
 const audioPlayer = document.getElementById('main-audio');
 const statusBadge = document.getElementById('status-badge');
 const audioInfo = document.getElementById('audio-player');
-const epTitle = document.getElementById('episode-title');
-const seaInfo = document.getElementById('season-info');
 const replayBtn = document.getElementById('replay-btn');
 const nextBtn = document.getElementById('next-btn');
 
@@ -38,28 +36,20 @@ function startScanner() {
 function onScanSuccess(decodedText) {
     console.log(`Scan result: ${decodedText}`);
     
-    // The decodedText might be a full URL like:
-    // http://192.168.1.5:8000/Season.1/chunks/Episode/chunk_00001.mp3
-    
-    // We try to find a match in our metadata.qr_pattern
     const match = metadata.find(item => decodedText.includes(item.qr_pattern));
 
     if (match) {
-        // Pause scanner
+        // Pause and HIDE scanner
         html5QrCode.pause();
+        document.getElementById('scanner-container').style.display = 'none';
         
         playAudio(match);
     }
 }
 
 function playAudio(item) {
-    statusBadge.innerText = 'Playing Audio...';
+    statusBadge.innerText = 'Listen Closely...';
     statusBadge.className = 'status-badge status-success';
-
-    // Show info
-    audioInfo.style.display = 'block';
-    epTitle.innerText = item.episode.replace(/\./g, ' ');
-    seaInfo.innerText = item.season.replace(/\./g, ' ');
 
     // Set audio source
     audioPlayer.src = `audio/${item.filename}`;
@@ -76,14 +66,17 @@ replayBtn.addEventListener('click', () => {
 });
 
 nextBtn.addEventListener('click', () => {
-    // Hide info and controls
-    audioInfo.style.display = 'none';
+    // Stop audio
+    audioPlayer.pause();
+    
+    // Hide controls
     replayBtn.style.display = 'none';
     nextBtn.style.display = 'none';
 
     statusBadge.innerText = 'Ready to Scan';
     statusBadge.className = 'status-badge status-ready';
 
-    // Resume scanner
+    // Show and Resume scanner
+    document.getElementById('scanner-container').style.display = 'block';
     html5QrCode.resume();
 });
