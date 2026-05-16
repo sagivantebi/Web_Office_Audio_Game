@@ -21,7 +21,13 @@ fetch('metadata.json')
 
 function startScanner() {
     html5QrCode = new Html5Qrcode("reader");
-    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    
+    // Force a perfect square for the scanning box
+    const config = { 
+        fps: 20, 
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0 
+    };
 
     html5QrCode.start(
         { facingMode: "environment" }, 
