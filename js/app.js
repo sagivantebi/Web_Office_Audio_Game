@@ -2,73 +2,67 @@ let metadata = [];
 let html5QrCode;
 const audioPlayer = document.getElementById('main-audio');
 const statusBadge = document.getElementById('status-badge');
-const audioInfo = document.getElementById('audio-player');
 const replayBtn = document.getElementById('replay-btn');
 const nextBtn = document.getElementById('next-btn');
+const scanSection = document.getElementById('scan-section');
+const playSection = document.getElementById('play-section');
 
 // Load metadata
 fetch('metadata.json')
     .then(response => response.json())
     .then(data => {
         metadata = data;
-        console.log('Metadata loaded:', metadata.length, 'items');
         startScanner();
     })
     .catch(err => {
-        console.error('Error loading metadata:', err);
-        statusBadge.innerText = 'Error Loading Game Data';
+        statusBadge.innerText = 'Error Loading Data';
     });
 
 function startScanner() {
     html5QrCode = new Html5Qrcode("reader");
-    
-    // Force a perfect square for the scanning box
     const config = { 
         fps: 20, 
         qrbox: { width: 250, height: 250 },
         aspectRatio: 1.0 
     };
 
-    html5QrCode.start(
-        { facingMode: "environment" }, 
-        config, 
-        onScanSuccess
-    ).catch(err => {
-        console.error('Scanner start error:', err);
-        statusBadge.innerText = 'Camera Access Required';
-    });
+    html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+        .catch(err => {
+            statusBadge.innerText = 'Camera Error';
+        });
 }
 
 function onScanSuccess(decodedText) {
-    console.log(`Scan result: ${decodedText}`);
-    
     const match = metadata.find(item => decodedText.includes(item.qr_pattern));
 
     if (match) {
-        // STOP and HIDE scanner
-        html5QrCode.stop().then(() => {
-            document.getElementById('scanner-container').style.display = 'none';
+        // UI Switch Logic
+        const switchToPlayback = () => {
+            scanSection.style.display = 'none';
+            playSection.style.display = 'block';
+            
+            // CRITICAL: Force clear the reader div to kill library text
+            document.getElementById('reader').innerHTML = "";
+            
             playAudio(match);
-        }).catch(err => {
-            console.error("Error stopping scanner", err);
-            // Fallback: hide anyway
-            document.getElementById('scanner-container').style.display = 'none';
-            playAudio(match);
+        };
+
+        // Attempt to stop camera, but switch UI immediately regardless
+        html5QrCode.stop().then(switchToPlayback).catch(err => {
+            console.error(err);
+            switchToPlayback();
         });
+        
+        // Safety timeout: if stop() hangs, switch anyway after 300ms
+        setTimeout(switchToPlayback, 300);
     }
 }
 
 function playAudio(item) {
     statusBadge.innerText = 'Listen Closely...';
     statusBadge.className = 'status-badge status-success';
-
-    // Set audio source
     audioPlayer.src = `audio/${item.filename}`;
     audioPlayer.play();
-
-    // Show controls
-    replayBtn.style.display = 'block';
-    nextBtn.style.display = 'block';
 }
 
 replayBtn.addEventListener('click', () => {
@@ -77,17 +71,14 @@ replayBtn.addEventListener('click', () => {
 });
 
 nextBtn.addEventListener('click', () => {
-    // Stop audio
     audioPlayer.pause();
     
-    // Hide controls
-    replayBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
+    // Switch UI back
+    playSection.style.display = 'none';
+    scanSection.style.display = 'block';
 
     statusBadge.innerText = 'Ready to Scan';
     statusBadge.className = 'status-badge status-ready';
 
-    // Show and Re-start scanner
-    document.getElementById('scanner-container').style.display = 'block';
     startScanner();
 });

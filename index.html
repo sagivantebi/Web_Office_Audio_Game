@@ -23,18 +23,22 @@
     <main>
         <div id="status-badge" class="status-badge status-ready">Ready to Scan</div>
 
-        <div id="scanner-container">
-            <div id="reader"></div>
+        <!-- Section 1: SCANNING -->
+        <div id="scan-section">
+            <div id="scanner-container">
+                <div id="reader"></div>
+            </div>
         </div>
 
-        <div id="audio-player" class="audio-info">
-            <!-- Names hidden for gameplay -->
-            <audio id="main-audio" src=""></audio>
-        </div>
-
-        <div class="controls">
-            <button id="replay-btn" class="btn-primary" style="display: none;">Replay Audio</button>
-            <button id="next-btn" class="btn-secondary" style="display: none;">Scan Next</button>
+        <!-- Section 2: PLAYBACK -->
+        <div id="play-section" style="display: none;">
+            <div class="audio-info">
+                <audio id="main-audio" src=""></audio>
+            </div>
+            <div class="controls">
+                <button id="replay-btn" class="btn-primary">Replay Audio</button>
+                <button id="next-btn" class="btn-secondary">Scan Next</button>
+            </div>
         </div>
     </main>
 
